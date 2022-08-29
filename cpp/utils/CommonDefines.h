@@ -24,4 +24,9 @@ struct Pixel {
   uint8_t alpha { };
 };
 
+struct PointI {
+  int32_t x { };
+  int32_t y { };
+};
+
 #endif /* COMMONDEFINES_H_ */

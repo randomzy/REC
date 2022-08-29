@@ -15,6 +15,9 @@ struct PackedImage {
 
   Resolution resolution;
   std::vector<Pixel> pixels;
+
+  Pixel & at(int32_t x, int32_t y);
+  Pixel const & at(int32_t x, int32_t y) const;
 };
 
 struct StrideImage {
@@ -29,5 +32,7 @@ struct StrideImage {
   std::vector<uint8_t> bluePixels;
   std::vector<uint8_t> alphaPixels;
 };
+
+void imwritePPM(std::string const & fname, PackedImage const &);
 
 #endif /* IMAGE_H_ */

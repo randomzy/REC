@@ -8,5 +8,5 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(utils)
 
-add_executable(RedEyeCorrection main.cpp)
+add_executable(RedEyeCorrection main.cpp Solution.cpp)
 target_link_libraries(RedEyeCorrection utils)

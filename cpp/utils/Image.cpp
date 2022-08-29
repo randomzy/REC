@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <cassert>
 
 namespace {
 Pixel parsePixel(uint32_t inputRgba) {
@@ -32,6 +33,19 @@ std::istream& operator>>(std::istream &istream, PackedImage &img) {
 
   return istream;
 }
+
+  Pixel & PackedImage::at(int32_t x, int32_t y)
+  {
+    assert(x >= 0 && x < resolution.width && y >= 0 && y < resolution.height && "Invalid dimensions");
+    return pixels[x + y * resolution.width];
+  }
+  Pixel const & PackedImage::at(int32_t x, int32_t y) const
+  {
+    assert(x >= 0 && x < resolution.width && y >= 0 && y < resolution.height && "Invalid dimensions");
+    return pixels[x + y * resolution.width];
+  }
+
+// ####################################################################################
 
 StrideImage::StrideImage(const Resolution &res)
     : resolution(res), redPixels(res.width * res.height),
@@ -64,3 +78,13 @@ std::istream& operator>>(std::istream &istream, StrideImage &img) {
   return istream;
 }
 
+void imwritePPM(std::string const & fname, PackedImage const & image)
+{
+  std::ofstream ofs(fname);
+  ofs << "P6\n";
+  ofs << image.resolution.width << " " << image.resolution.height << "\n";
+  ofs << "255\n";
+  for (auto const & p : image.pixels) {
+    ofs.write((char*)&p, 3);
+  }
+}
