@@ -28,23 +28,22 @@ static inline void nonWhitespaceIndices(EyePattern const & pattern, std::vector<
   }
 }
 
-static inline void correctRedEye(PackedImage & image, PointI const & start, std::vector<PointI> const & indices)
+static inline void correctRedEye(StrideImage & image, PointI const & start, std::vector<PointI> const & indices)
 {
-  for (auto index : indices) {
-    image.at(start.x + index.x, start.y + index.y).red -= redReduction;
+  for (auto const & index : indices) {
+      image.at<0>(start.x + index.x, start.y + index.y) -= redReduction;
   }
 }
 
-static inline bool isRedEye(PackedImage & image, PointI const & start, std::vector<PointI> const & indices)
+static inline bool isRedEye(StrideImage const & image, PointI const & start, std::vector<PointI> const & indices)
 {
   return std::all_of(indices.begin(), indices.end(), [&](auto const & p){
-    return image.at(start.x + p.x, start.y + p.y).red >= redThreshold;
+      return image.at<0>(start.x + p.x, start.y + p.y) >= redThreshold;
   });
 }
 
-inline void processImage(PackedImage & image, std::array<std::vector<PointI>, EYE_PATTERNS_COUNT> const & pattern)
+inline void processImage(StrideImage & image, std::array<std::vector<PointI>, EYE_PATTERNS_COUNT> const & pattern)
 {
-  std::array<std::vector<PointI>, EYE_PATTERNS_COUNT> eyeCandidates;
   for (int y = 0; y < image.resolution.height - EYE_PATTERN_COL_SIZE + 1; y++) {
     for (int x = 0; x < image.resolution.width - EYE_PATTERN_COL_SIZE + 1; x++) {
       for (int p = 0; p < EYE_PATTERNS_COUNT; p++) {
@@ -55,7 +54,7 @@ inline void processImage(PackedImage & image, std::array<std::vector<PointI>, EY
   }
 }
 
-void Solution::compute([[maybe_unused]] std::vector<PackedImage> &images) {
+void Solution::compute([[maybe_unused]] std::vector<StrideImage> &images) {
   FunctionTracer<std::chrono::milliseconds> tracer("compute", "ms");
   std::array<std::vector<PointI>, EYE_PATTERNS_COUNT> preprocessedPatterns;
   // note the reverse iterators when processing filters
@@ -72,7 +71,7 @@ void Solution::compute([[maybe_unused]] std::vector<PackedImage> &images) {
     processImage(image, preprocessedPatterns);
 }
 
-void Solution::compute([[maybe_unused]] std::vector<StrideImage> &images) {
+void Solution::compute([[maybe_unused]] std::vector<PackedImage> &images) {
   FunctionTracer<std::chrono::milliseconds> tracer("compute", "ms");
   // TODO: fill solution
 }

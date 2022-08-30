@@ -36,8 +36,7 @@ std::istream& operator>>(std::istream &istream, PackedImage &img) {
 
   Pixel & PackedImage::at(int32_t x, int32_t y)
   {
-    assert(x >= 0 && x < resolution.width && y >= 0 && y < resolution.height && "Invalid dimensions");
-    return pixels[x + y * resolution.width];
+    return const_cast<Pixel&>(const_cast<PackedImage const *>(this)->at(x, y));
   }
   Pixel const & PackedImage::at(int32_t x, int32_t y) const
   {
