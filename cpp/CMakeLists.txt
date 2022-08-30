@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(utils)
+find_package (Threads REQUIRED)
 
 add_executable(RedEyeCorrection main.cpp Solution.cpp)
-target_link_libraries(RedEyeCorrection utils)
+target_link_libraries(RedEyeCorrection utils Threads::Threads)
