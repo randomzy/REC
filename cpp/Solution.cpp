@@ -41,9 +41,12 @@ static inline void correctRedEye(StrideImage & image, PointI const & start, std:
 
 static inline bool isRedEye(StrideImage const & image, PointI const & start, std::vector<PointI> const & indices)
 {
-  return std::all_of(indices.begin(), indices.end(), [&](auto const & p){
-      return image.at<0>(start.x + p.x, start.y + p.y) >= redThreshold;
-  });
+  for (const auto & index : indices) {
+    if (image.at<0>(start.x + index.x, start.y + index.y) < redThreshold) {
+      return false;
+    }
+  }
+  return true;
 }
 
 inline void processImage(StrideImage & image, std::array<std::vector<PointI>, EYE_PATTERNS_COUNT> const & pattern, int ystart, int ysize)
@@ -52,7 +55,7 @@ inline void processImage(StrideImage & image, std::array<std::vector<PointI>, EY
   for (int y = ystart; y < yend; y++) {
     for (int x = 0; x < image.resolution.width - EYE_PATTERN_COL_SIZE + 1; x++) {
       for (int p = 0; p < EYE_PATTERNS_COUNT; p++) {
-        if (isRedEye(image, {x,y}, pattern[p]))
+        if (image.at<0>(x,y) >= redThreshold && isRedEye(image, {x,y}, pattern[p]))
           correctRedEye(image, {x,y}, pattern[p]);
       }
     }
