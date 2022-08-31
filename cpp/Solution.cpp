@@ -42,7 +42,10 @@ static inline void correctRedEye(StrideImage & image, PointI const & start, std:
 static inline bool isRedEye(StrideImage const & image, PointI const & start, std::vector<PointI> const & indices)
 {
   for (const auto & index : indices) {
-    if (image.at<0>(start.x + index.x, start.y + index.y) < redThreshold) {
+    // filter cols can have variable size
+    // if filter applied at start is out of bounds then it is not red eye
+    // no need to check for rows as they are known a priori
+    if (start.x + index.x >= image.resolution.width || image.at<0>(start.x + index.x, start.y + index.y) < redThreshold) {
       return false;
     }
   }
@@ -53,7 +56,7 @@ inline void processImage(StrideImage & image, std::array<std::vector<PointI>, EY
 {
   int yend = std::min(image.resolution.height - EYE_PATTERN_COL_SIZE + 1, ystart + ysize);
   for (int y = ystart; y < yend; y++) {
-    for (int x = 0; x < image.resolution.width - EYE_PATTERN_COL_SIZE + 1; x++) {
+    for (int x = 0; x < image.resolution.width; x++) {
       for (int p = 0; p < EYE_PATTERNS_COUNT; p++) {
         if (image.at<0>(x,y) >= redThreshold && isRedEye(image, {x,y}, pattern[p]))
           correctRedEye(image, {x,y}, pattern[p]);
