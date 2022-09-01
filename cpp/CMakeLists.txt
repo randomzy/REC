@@ -11,3 +11,4 @@ find_package (Threads REQUIRED)
 
 add_executable(RedEyeCorrection main.cpp Solution.cpp)
 target_link_libraries(RedEyeCorrection utils Threads::Threads)
+target_compile_options(RedEyeCorrection PUBLIC -Wall -Wextra)
